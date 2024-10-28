@@ -1,0 +1,58 @@
+{% include "header.html" %}
+
+<div class="container">
+  <div class="py-5 text-center">
+    <h1 class="mt-5">Add Dish to Franchise Type</h1>
+  </div>
+
+  <form action="{{ url_for('add_dish_to_franchise_type') }}" method="post">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="name">Dish Name:</label>
+        <input
+          class="form-control"
+          type="text"
+          name="name"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="description">Description:</label>
+        <textarea
+          class="form-control"
+          name="description"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="price">Price (zł):</label>
+        <input
+          class="form-control"
+          type="number"
+          name="price"
+          step="0.01"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="franchise_type_id">Franchise Type:</label>
+        <select class="form-control" name="franchise_type_id" required>
+          {% for type in franchise_types %}
+          <option value="{{ type.id }}">{{ type.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <hr class="my-5" />
+      <input
+        class="mt-0 w-100 btn btn-dark btn-lg"
+        type="submit"
+        value="Add Dish"
+      />
+    </div>
+  </form>
+</div>
+
+{% include "message_modal.html" %}
+
+{% include "footer.html" %}

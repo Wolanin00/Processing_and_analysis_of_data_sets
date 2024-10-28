@@ -1,0 +1,92 @@
+{% include "header.html" %}
+
+<main class="flex-shrink-0">
+  <div class="py-5 container">
+    <h1 class="mt-5">Select Owner and Franchise Type</h1>
+    <hr />
+
+    <!-- Brand Logos Section -->
+    <div class="brand-logos">
+        <img src="/static/mcdonalds.png" alt="McDonald's Logo" class="brand-logo">
+        <img src="/static/burgerking.png" alt="Burger King Logo" class="brand-logo">
+        <img src="/static/kfc.png" alt="KFC Logo" class="brand-logo">
+        <img src="/static/wloska_pizza.png" alt="KFC Logo" class="brand-logo">
+        <img src="/static/dominos.png" alt="KFC Logo" class="brand-logo">
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="owner_id">Owner:</label>
+        <select class="form-control" id="owner_id" required>
+          <option value="">Select Owner</option>
+          {% for owner in owners %}
+          <option value="{{ owner.id }}">{{ owner.name }} {{ owner.surname }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12" id="franchise_type_container" style="display: none;">
+        <label class="form-label" for="franchise_type_id">Franchise Type:</label>
+        <select class="form-control" id="franchise_type_id" required>
+          <option value="">Select Franchise Type</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="col-12 mt-4" id="dishes_container" style="display: none;">
+      <h3>Dishes</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price (zł)</th>
+          </tr>
+        </thead>
+        <tbody id="dishes_table_body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+{% include "footer.html" %}
+
+<script>
+  document.getElementById("owner_id").addEventListener("change", function () {
+      const ownerId = this.value;
+      if (ownerId) {
+          fetch(`/get_franchise_types/${ownerId}`)
+              .then(response => response.json())
+              .then(data => {
+                  const franchiseTypeSelect = document.getElementById("franchise_type_id");
+                  franchiseTypeSelect.innerHTML = '<option value="">Select Franchise Type</option>';
+                  data.franchise_types.forEach(type => {
+                      franchiseTypeSelect.innerHTML += `<option value="${type.id}">${type.name} - ${type.city}, ${type.address}</option>`;
+                  });
+                  document.getElementById("franchise_type_container").style.display = 'block';
+              });
+      } else {
+          document.getElementById("franchise_type_container").style.display = 'none';
+          document.getElementById("dishes_container").style.display = 'none';
+      }
+  });
+  
+  document.getElementById("franchise_type_id").addEventListener("change", function () {
+      const franchiseTypeId = this.value;
+      if (franchiseTypeId) {
+          fetch(`/get_dishes/${franchiseTypeId}`)
+              .then(response => response.json())
+              .then(data => {
+                  const dishesTableBody = document.getElementById("dishes_table_body");
+                  dishesTableBody.innerHTML = '';
+                  data.dishes.forEach(dish => {
+                      dishesTableBody.innerHTML += `<tr><td>${dish.name}</td><td>${dish.description}</td><td>${dish.price}</td></tr>`;
+                  });
+                  document.getElementById("dishes_container").style.display = 'block';
+              });
+      } else {
+          document.getElementById("dishes_container").style.display = 'none';
+      }
+  });
+</script>

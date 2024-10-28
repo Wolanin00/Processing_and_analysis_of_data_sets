@@ -1,0 +1,40 @@
+{% include "header.html" %}
+
+<div class="container">
+  <div class="py-5 text-center">
+    <h1 class="mt-5">Add Franchise Type</h1>
+  </div>
+
+  <form action="{{ url_for('add_franchise_type') }}" method="post">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="name">Franchise Type Name:</label>
+        <input
+          class="form-control"
+          type="text"
+          name="name"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="description">Description:</label>
+        <textarea
+          class="form-control"
+          name="description"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      <hr class="my-5" />
+      <input
+        class="mt-0 w-100 btn btn-dark btn-lg"
+        type="submit"
+        value="Add Franchise Type"
+      />
+    </div>
+  </form>
+</div>
+
+{% include "message_modal.html" %}
+
+{% include "footer.html" %}

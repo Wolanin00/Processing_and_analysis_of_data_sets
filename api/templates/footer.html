@@ -1,0 +1,17 @@
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+      <span class="text-muted">© 2024 Copyright by Mateusz Szewczyk</span>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const messages = {{ get_flashed_messages()|tojson }};
+      if (messages && messages.length > 0) {
+          const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+          modal.show();
+      }
+  });
+</script>
+</body>
+</html>
