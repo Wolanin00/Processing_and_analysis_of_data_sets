@@ -1,6 +1,7 @@
 # Processing and analysis of large data sets
 
 Project for completing the course "Przetwarzanie i analiza dużych zbiorów danych"
+
 This project manages franchise-related data for different owners, franchise types, dishes, and franchise locations using a SQLite database and a Flask web application.
 
 ## Project preview
