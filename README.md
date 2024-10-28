@@ -19,7 +19,7 @@ The database consists of four main tables: `Owner`, `FranchiseType`, `Dish`, and
 ### Tables
 
 - **Owner**
-  - Columns: `id`, `name`, `surname`, `age`, `email`
+  - Columns: `id`, `name`, `surname`, `age`, `email`, `phone_number`
   - Relationships: 
     - One-to-Many with `FranchiseLocation` (an owner can have multiple franchise locations)
 
@@ -53,6 +53,7 @@ Here's a UML-style ER diagram representing the database relationships:
 | surname        |          | description      |
 | age            |          |                  |
 | email          |          |                  |
+| phone_number   |          |                  |
 +----------------+          +------------------+
          |                            |
          |                            |

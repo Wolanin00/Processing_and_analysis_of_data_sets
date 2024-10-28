@@ -18,7 +18,7 @@
         />
       </div>
       <div class="col-6">
-        <label class="form-label" for="name">Surname:</label>
+        <label class="form-label" for="surname">Surname:</label>
         <input
           class="form-control"
           type="text"
@@ -27,14 +27,26 @@
           required
         />
       </div>
-      <div class="col-12">
-        <label class="form-label" for="name">Age:</label>
+      <div class="col-6">
+        <label class="form-label" for="age">Age:</label>
         <input
           class="form-control"
           type="text"
           name="age"
           value="{{ age }}"
           required
+        />
+      </div>
+      <div class="col-6">
+        <label class="form-label" for="tel">Phone number:</label>
+        <input
+          class="form-control"
+          type="tel"
+          name="phone_number"
+          value="{{ phone_number }}"
+          pattern="^([0-9]{3}-[0-9]{3}-[0-9]{3}|[0-9]{9})$"
+          required
+          placeholder="123-456-789 or 123456789"
         />
       </div>
       <div class="col-12">

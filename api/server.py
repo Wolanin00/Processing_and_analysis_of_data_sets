@@ -19,6 +19,7 @@ class Owner(db.Model):
     surname = db.Column(db.String(100), nullable=False)
     age = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    phone_number = db.Column(db.String(15), nullable=False)
 
     locations = db.relationship("FranchiseLocation", back_populates="owner")
 
@@ -73,24 +74,25 @@ def add_owner():
         surname = request.form['surname']
         age = request.form['age']
         email = request.form['email']  # unique
+        phone_number = request.form['phone_number']
 
         existing_owner = Owner.query.filter_by(email=email).first()
         if existing_owner:
             flash('Email already exists. Please use a different email.')
-            return render_template('add_owner.html', name=name, surname=surname, age=age)
+            return render_template('add_owner.html', name=name, surname=surname, age=age, phone_number=phone_number)
         try:
             age_int = float(age)
             if not age_int.is_integer():
                 flash('Age must be integer.')
-                return render_template('add_owner.html', name=name, surname=surname, email=email)
+                return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
             if age_int < 18:
                 flash('To become a founder, you must be of legal age.')
-                return render_template('add_owner.html', name=name, surname=surname, email=email)
+                return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
         except (ValueError, TypeError):
             flash('Age must be integer.')
-            return render_template('add_owner.html', name=name, surname=surname, email=email)
+            return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
 
-        new_owner = Owner(name=name, surname=surname, age=age_int, email=email)
+        new_owner = Owner(name=name, surname=surname, age=age_int, email=email, phone_number=phone_number)
         db.session.add(new_owner)
         db.session.commit()
         return redirect(url_for('index'))
