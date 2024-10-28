@@ -1,0 +1,4 @@
+Flask
+pip
+flask_sqlalchemy
+gunicorn
