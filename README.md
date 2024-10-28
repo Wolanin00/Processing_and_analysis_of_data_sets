@@ -1,6 +1,7 @@
 # Processing and analysis of large data sets
 
 Project for completing the course "Przetwarzanie i analiza dużych zbiorów danych"
+This project manages franchise-related data for different owners, franchise types, dishes, and franchise locations using a SQLite database and a Flask web application.
 
 ## Project preview
 
@@ -10,38 +11,39 @@ Project for completing the course "Przetwarzanie i analiza dużych zbiorów dany
 -After click wait some time (10 second) to deploy app.
 ```
 
-## Table Relationships
+## Database Schema
 
-### `Owner` Table
-- **Columns**: `id`, `name`, `surname`, `age`, `email`
-- **Relationships**:
-  - One (`Owner`) to many (`FranchiseLocation`)
-  - Relationship: `locations` - an owner can have multiple franchise locations.
+The database consists of four main tables: `Owner`, `FranchiseType`, `Dish`, and `FranchiseLocation`. Below is an overview of each table and their relationships.
 
-### `FranchiseType` Table
-- **Columns**: `id`, `name`, `description`
-- **Relationships**:
-  - One (`FranchiseType`) to many (`FranchiseLocation`)
-  - Relationship: `locations` - a franchise type can have multiple locations.
-  - One (`FranchiseType`) to many (`Dish`)
-  - Relationship: `dishes` - a franchise type can have multiple dishes assigned to it.
+### Tables
 
-### `Dish` Table
-- **Columns**: `id`, `name`, `description`, `price`, `franchise_type_id`
-- **Relationships**:
-  - Many (`Dish`) to one (`FranchiseType`)
-  - Relationship: `franchise_type` - each dish belongs to a specific franchise type.
+- **Owner**
+  - Columns: `id`, `name`, `surname`, `age`, `email`
+  - Relationships: 
+    - One-to-Many with `FranchiseLocation` (an owner can have multiple franchise locations)
 
-### `FranchiseLocation` Table
-- **Columns**: `id`, `address`, `city`, `owner_id`, `franchise_type_id`
-- **Relationships**:
-  - Many (`FranchiseLocation`) to one (`Owner`)
-  - Relationship: `owner` - each location is associated with an owner.
-  - Many (`FranchiseLocation`) to one (`FranchiseType`)
-  - Relationship: `franchise_type` - each location belongs to a specific franchise type.
+- **FranchiseType**
+  - Columns: `id`, `name`, `description`
+  - Relationships: 
+    - One-to-Many with `FranchiseLocation` (a franchise type can have multiple locations)
+    - One-to-Many with `Dish` (a franchise type can have multiple dishes)
 
-## Relationship Diagram
+- **Dish**
+  - Columns: `id`, `name`, `description`, `price`, `franchise_type_id`
+  - Relationships: 
+    - Many-to-One with `FranchiseType` (each dish belongs to a specific franchise type)
 
+- **FranchiseLocation**
+  - Columns: `id`, `address`, `city`, `owner_id`, `franchise_type_id`
+  - Relationships: 
+    - Many-to-One with `Owner` (each location has one owner)
+    - Many-to-One with `FranchiseType` (each location belongs to a specific franchise type)
+
+### Entity-Relationship Diagram
+
+Here's a UML-style ER diagram representing the database relationships:
+
+```plaintext
 +----------------+          +------------------+
 |     Owner      |          |  FranchiseType   |
 |----------------|          |------------------|
@@ -79,3 +81,4 @@ Project for completing the course "Przetwarzanie i analiza dużych zbiorów dany
 | price                  |
 | franchise_type_id (FK) |
 +------------------------+
+```
