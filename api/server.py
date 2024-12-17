@@ -15,6 +15,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
+
 class Owner(db.Model):
     __tablename__ = "owners"
     id = db.Column(db.Integer, primary_key=True)
