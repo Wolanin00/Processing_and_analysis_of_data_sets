@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import render_template, request, redirect, url_for, flash
 import os
+import random
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -56,6 +57,18 @@ class FranchiseLocation(db.Model):
     franchise_type = db.relationship("FranchiseType", back_populates="locations")
 
 
+class Review(db.Model):
+    __tablename__ = "reviews"
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.String(500), nullable=True)
+    dish_id = db.Column(db.Integer, db.ForeignKey("dishes.id"), nullable=False)
+    dish = db.relationship("Dish", back_populates="reviews")
+
+
+Dish.reviews = db.relationship("Review", back_populates="dish")
+
+
 with app.app_context():
     db.create_all()
 
@@ -64,7 +77,18 @@ with app.app_context():
 def index():
     owners = Owner.query.all()
     franchise_types = FranchiseType.query.all()
-    return render_template('index.html', owners=owners, franchise_types=franchise_types)
+    dishes_with_reviews = Dish.query.all()
+
+    # Dodanie losowych 3 opinii dla każdego dania
+    for dish in dishes_with_reviews:
+        dish.random_reviews = random.sample(dish.reviews, min(3, len(dish.reviews)))
+
+    return render_template(
+        'index.html',
+        owners=owners,
+        franchise_types=franchise_types,
+        dishes_with_reviews=dishes_with_reviews
+    )
 
 
 @app.route('/add_owner', methods=['GET', 'POST'])
@@ -164,6 +188,21 @@ def get_dishes(franchise_type_id):
     dishes = Dish.query.filter_by(franchise_type_id=franchise_type_id).all()
     dish_data = [{"name": dish.name, "description": dish.description, "price": dish.price} for dish in dishes]
     return {"dishes": dish_data}
+
+@app.route('/add_review', methods=['GET', 'POST'])
+def add_review():
+    dishes = Dish.query.all()
+    if request.method == 'POST':
+        dish_id = request.form['dish_id']
+        rating = request.form['rating']
+        comment = request.form['comment']
+
+        new_review = Review(dish_id=dish_id, rating=rating, comment=comment)
+        db.session.add(new_review)
+        db.session.commit()
+        flash("Review added successfully!")
+        return redirect(url_for('index'))
+    return render_template('add_review.html', dishes=dishes)
 
 
 if __name__ == '__main__':

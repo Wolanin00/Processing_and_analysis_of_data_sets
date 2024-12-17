@@ -1,0 +1,44 @@
+{% include "header.html" %}
+
+<div class="container">
+  <div class="py-5 text-center">
+    <h1 class="mt-5">Add Review</h1>
+  </div>
+
+  <form action="{{ url_for('add_review') }}" method="post">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="dish_id">Dish:</label>
+        <select class="form-control" name="dish_id" required>
+          {% for dish in dishes %}
+          <option value="{{ dish.id }}">{{ dish.name }} ({{ dish.price }} zł)</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="rating">Rating (1-5):</label>
+        <input
+          class="form-control"
+          type="number"
+          name="rating"
+          min="1"
+          max="5"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="comment">Comment:</label>
+        <textarea
+          class="form-control"
+          name="comment"
+          rows="4"
+        ></textarea>
+      </div>
+      <hr class="my-5" />
+      <input class="w-100 btn btn-dark btn-lg" type="submit" value="Add Review" />
+    </div>
+  </form>
+</div>
+
+{% include "message_modal.html" %}
+{% include "footer.html" %}

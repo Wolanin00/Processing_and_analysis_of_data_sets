@@ -2,7 +2,9 @@
 
 <main class="flex-shrink-0">
   <div class="py-5 container">
-    <h1 class="mt-5">Select Owner and Franchise Type</h1>
+
+    <!-- Sekcja wyboru właściciela i typu franczyzy -->
+    <h2 class="mt-5">Select Owner and Franchise Type</h2>
     <hr />
 
     <!-- Brand Logos Section -->
@@ -47,6 +49,37 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Sekcja wyświetlająca dania z maksymalnie 3 opiniami -->
+    <h2 class="mt-5">Dishes and Reviews</h2>
+    <hr />
+    <div class="row">
+      {% for dish in dishes_with_reviews %}
+      <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">{{ dish.name }}</h5>
+            <p class="card-text">{{ dish.description }}</p>
+            <p class="fw-bold">Price: {{ dish.price }} zł</p>
+            <h6>Reviews:</h6>
+            <ul>
+              {% if dish.random_reviews %}
+                {% for review in dish.random_reviews %}
+                <li>
+                  <strong>Rating:</strong> {{ review.rating }} / 5
+                  {% if review.comment %} - "{{ review.comment }}" {% endif %}
+                </li>
+                {% endfor %}
+              {% else %}
+                <li>No reviews yet.</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
   </div>
 </main>
 
