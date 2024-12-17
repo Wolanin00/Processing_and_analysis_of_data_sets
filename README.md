@@ -40,6 +40,9 @@ The database consists of four main tables: `Owner`, `FranchiseType`, `Dish`, and
     - Many-to-One with `Owner` (each location has one owner)
     - Many-to-One with `FranchiseType` (each location belongs to a specific franchise type)
 
+- **Review**
+  - Columns: `id`, `rating`, `comment`, `dish_id`
+
 ### Entity-Relationship Diagram
 
 Here's a UML-style ER diagram representing the database relationships:
@@ -82,5 +85,18 @@ Here's a UML-style ER diagram representing the database relationships:
 | description            |
 | price                  |
 | franchise_type_id (FK) |
++------------------------+
+         |
+         |
+        [*]
+         |
+         v
++------------------------+
+|         Review         |
+|------------------------|
+| id (PK)                |
+| rating                 |
+| comment                |
+| dish_id (FK)           |
 +------------------------+
 ```
