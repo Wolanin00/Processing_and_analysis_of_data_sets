@@ -7,9 +7,11 @@ import random
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'franchise.db')}"
-app.config['SECRET_KEY'] = 'my_secret_key'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"sqlite:///{os.path.join(BASE_DIR, 'franchise.db')}"
+)
+app.config["SECRET_KEY"] = "my_secret_key"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
@@ -73,7 +75,7 @@ with app.app_context():
     db.create_all()
 
 
-@app.route('/')
+@app.route("/")
 def index():
     owners = Owner.query.all()
     franchise_types = FranchiseType.query.all()
@@ -84,126 +86,173 @@ def index():
         dish.random_reviews = random.sample(dish.reviews, min(3, len(dish.reviews)))
 
     return render_template(
-        'index.html',
+        "index.html",
         owners=owners,
         franchise_types=franchise_types,
-        dishes_with_reviews=dishes_with_reviews
+        dishes_with_reviews=dishes_with_reviews,
     )
 
 
-@app.route('/add_owner', methods=['GET', 'POST'])
+@app.route("/add_owner", methods=["GET", "POST"])
 def add_owner():
-    if request.method == 'POST':
-        name = request.form['name']
-        surname = request.form['surname']
-        age = request.form['age']
-        email = request.form['email']  # unique
-        phone_number = request.form['phone_number']
+    if request.method == "POST":
+        name = request.form["name"]
+        surname = request.form["surname"]
+        age = request.form["age"]
+        email = request.form["email"]  # unique
+        phone_number = request.form["phone_number"]
 
         existing_owner = Owner.query.filter_by(email=email).first()
         if existing_owner:
-            flash('Email already exists. Please use a different email.')
-            return render_template('add_owner.html', name=name, surname=surname, age=age, phone_number=phone_number)
+            flash("Email already exists. Please use a different email.")
+            return render_template(
+                "add_owner.html",
+                name=name,
+                surname=surname,
+                age=age,
+                phone_number=phone_number,
+            )
         try:
             age_int = float(age)
             if not age_int.is_integer():
-                flash('Age must be integer.')
-                return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
+                flash("Age must be integer.")
+                return render_template(
+                    "add_owner.html",
+                    name=name,
+                    surname=surname,
+                    email=email,
+                    phone_number=phone_number,
+                )
             if age_int < 18:
-                flash('To become a founder, you must be of legal age.')
-                return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
+                flash("To become a founder, you must be of legal age.")
+                return render_template(
+                    "add_owner.html",
+                    name=name,
+                    surname=surname,
+                    email=email,
+                    phone_number=phone_number,
+                )
         except (ValueError, TypeError):
-            flash('Age must be integer.')
-            return render_template('add_owner.html', name=name, surname=surname, email=email, phone_number=phone_number)
+            flash("Age must be integer.")
+            return render_template(
+                "add_owner.html",
+                name=name,
+                surname=surname,
+                email=email,
+                phone_number=phone_number,
+            )
 
-        new_owner = Owner(name=name, surname=surname, age=age_int, email=email, phone_number=phone_number)
+        new_owner = Owner(
+            name=name,
+            surname=surname,
+            age=age_int,
+            email=email,
+            phone_number=phone_number,
+        )
         db.session.add(new_owner)
         db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('add_owner.html')
+        return redirect(url_for("index"))
+    return render_template("add_owner.html")
 
 
-@app.route('/add_franchise_type', methods=['GET', 'POST'])
+@app.route("/add_franchise_type", methods=["GET", "POST"])
 def add_franchise_type():
-    if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
         new_type = FranchiseType(name=name, description=description)
         db.session.add(new_type)
         db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('add_franchise_type.html')
+        return redirect(url_for("index"))
+    return render_template("add_franchise_type.html")
 
 
-@app.route('/add_dish_to_franchise_type', methods=['GET', 'POST'])
+@app.route("/add_dish_to_franchise_type", methods=["GET", "POST"])
 def add_dish_to_franchise_type():
     franchise_types = FranchiseType.query.all()
-    if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
-        price = request.form['price']
-        franchise_type_id = request.form['franchise_type_id']
-        new_dish = Dish(name=name, description=description, franchise_type_id=franchise_type_id, price=price)
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
+        price = request.form["price"]
+        franchise_type_id = request.form["franchise_type_id"]
+        new_dish = Dish(
+            name=name,
+            description=description,
+            franchise_type_id=franchise_type_id,
+            price=price,
+        )
         db.session.add(new_dish)
         db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('add_dish_to_franchise_type.html', franchise_types=franchise_types)
+        return redirect(url_for("index"))
+    return render_template(
+        "add_dish_to_franchise_type.html", franchise_types=franchise_types
+    )
 
 
-@app.route('/assign_franchise_to_owner', methods=['GET', 'POST'])
+@app.route("/assign_franchise_to_owner", methods=["GET", "POST"])
 def assign_franchise_to_owner():
     owners = Owner.query.all()
     franchise_types = FranchiseType.query.all()
-    if request.method == 'POST':
-        owner_id = request.form['owner_id']
-        franchise_type_id = request.form['franchise_type_id']
-        address = request.form['address']
-        city = request.form['city']
+    if request.method == "POST":
+        owner_id = request.form["owner_id"]
+        franchise_type_id = request.form["franchise_type_id"]
+        address = request.form["address"]
+        city = request.form["city"]
 
         new_location = FranchiseLocation(
             address=address,
             city=city,
             owner_id=owner_id,
-            franchise_type_id=franchise_type_id
+            franchise_type_id=franchise_type_id,
         )
         db.session.add(new_location)
         db.session.commit()
-        return redirect(url_for('index'))
-    return render_template('assign_franchise_to_owner.html', owners=owners, franchise_types=franchise_types)
+        return redirect(url_for("index"))
+    return render_template(
+        "assign_franchise_to_owner.html", owners=owners, franchise_types=franchise_types
+    )
 
 
-@app.route('/get_franchise_types/<int:owner_id>')
+@app.route("/get_franchise_types/<int:owner_id>")
 def get_franchise_types(owner_id):
     franchises = FranchiseLocation.query.filter_by(owner_id=owner_id).all()
     franchise_types = [
-        {"id": franchise.franchise_type.id, "name": franchise.franchise_type.name, "city": franchise.city,
-         "address": franchise.address}
+        {
+            "id": franchise.franchise_type.id,
+            "name": franchise.franchise_type.name,
+            "city": franchise.city,
+            "address": franchise.address,
+        }
         for franchise in franchises
     ]
     return {"franchise_types": franchise_types}
 
 
-@app.route('/get_dishes/<int:franchise_type_id>')
+@app.route("/get_dishes/<int:franchise_type_id>")
 def get_dishes(franchise_type_id):
     dishes = Dish.query.filter_by(franchise_type_id=franchise_type_id).all()
-    dish_data = [{"name": dish.name, "description": dish.description, "price": dish.price} for dish in dishes]
+    dish_data = [
+        {"name": dish.name, "description": dish.description, "price": dish.price}
+        for dish in dishes
+    ]
     return {"dishes": dish_data}
 
-@app.route('/add_review', methods=['GET', 'POST'])
+
+@app.route("/add_review", methods=["GET", "POST"])
 def add_review():
     dishes = Dish.query.all()
-    if request.method == 'POST':
-        dish_id = request.form['dish_id']
-        rating = request.form['rating']
-        comment = request.form['comment']
+    if request.method == "POST":
+        dish_id = request.form["dish_id"]
+        rating = request.form["rating"]
+        comment = request.form["comment"]
 
         new_review = Review(dish_id=dish_id, rating=rating, comment=comment)
         db.session.add(new_review)
         db.session.commit()
         flash("Review added successfully!")
-        return redirect(url_for('index'))
-    return render_template('add_review.html', dishes=dishes)
+        return redirect(url_for("index"))
+    return render_template("add_review.html", dishes=dishes)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
